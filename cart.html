@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FENDI1 – Warenkorb</title>
+  <link rel="stylesheet" href="style.css"/>
+  <!-- PAYPAL SDK: setze DEINE Client-ID ein -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AfC5VIRffxPVQHxMA0A2pXKWXUDmP-fld-hyoiyH1PU8zCN075ZgHvUdvxNr1jiy7lculhBUw7tG2kGC&currency=EUR"></script>
+</head>
+<body class="light no-bg">
+  <header>
+    <div class="logo">FENDI1</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#hoodies">Hoodies</a>
+      <a href="#shirts">Shirts</a>
+      <a href="sticker.html">Stickers</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main class="page-min">
+    <div class="cart-wrap" id="cart-page">
+      <h1>Warenkorb</h1>
+
+      <div id="cart-empty" style="display:none; opacity:.8; margin:18px 0">
+        Dein Warenkorb ist leer. <a href="sticker.html">Zu den Stickern</a>
+      </div>
+
+      <div id="cart-has-items" style="display:none">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Artikel</th>
+              <th>Details</th>
+              <th>Preis</th>
+              <th>Menge</th>
+              <th>Summe</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cart-items"></tbody>
+        </table>
+
+        <div class="cart-summary">
+          <div>
+            <button class="btn btn-light" onclick="clearCart()">Warenkorb leeren</button>
+            <a class="btn" href="sticker.html">Weiter shoppen</a>
+          </div>
+          <div style="font-size:18px;font-weight:800">Gesamt: <span id="cart-total">0,00 €</span></div>
+        </div>
+
+        <div>
+          <div class="btn btn-light" id="fake-buy-now" onclick="window.location.href='sticker.html'">Oder weitere Artikel wählen</div>
+          <div id="paypal-button-container"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 FENDI1. ALL RIGHTS RESERVED.</p>
+  </footer>
+
+  <script>
+
+    const CART_KEY = "f1_cart_v1";
+    function getCart() { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+    function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartCount(); }
+
+    function clearCart() { saveCart([]); renderCart(); }
+
+    function updateCartCount() {
+      const el = document.getElementById('cart-count');
+      if (!el) return;
+      const count = getCart().reduce((s,i)=>s+i.qty,0);
+      el.textContent = count > 99 ? '99+' : count;
+    }
+
+    function renderCart() {
+      const cart = getCart();
+      const emptyEl = document.getElementById('cart-empty');
+      const hasItemsEl = document.getElementById('cart-has-items');
+      const tbody = document.getElementById('cart-items');
+      const totalEl = document.getElementById('cart-total');
+      tbody.innerHTML = '';
+
+      if (!cart.length) {
+        emptyEl.style.display = 'block';
+        hasItemsEl.style.display = 'none';
+        totalEl.textContent = '0,00 €';
+        const pp = document.getElementById('paypal-button-container');
+        if (pp) pp.innerHTML = '';
+        return;
+      }
+
+      emptyEl.style.display = 'none';
+      hasItemsEl.style.display = 'block';
+
+      cart.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><img class="cart-row-img" src="${item.img || 'assets/placeholder.png'}" alt=""></td>
+          <td>
+            <div style="font-weight:700">${item.name}</div>
+            ${item.option ? `<div style="opacity:.7;font-size:14px">${item.option}</div>` : ''}
+            <div style="opacity:.7;font-size:14px">SKU: ${item.sku}</div>
+          </td>
+          <td>${item.price.toFixed(2)} €</td>
+          <td style="white-space:nowrap">
+            <button class="btn btn-light" data-qty-minus="${idx}">–</button>
+            <span style="display:inline-block; min-width:28px; text-align:center">${item.qty}</span>
+            <button class="btn btn-light" data-qty-plus="${idx}">+</button>
+          </td>
+          <td>${(item.price*item.qty).toFixed(2)} €</td>
+          <td><button class="btn btn-danger" data-remove="${idx}">Entfernen</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll('[data-qty-minus]').forEach(b=>{
+        b.addEventListener('click',()=>{
+          const i=parseInt(b.dataset.qtyMinus,10);
+          const cart=getCart(); cart[i].qty=Math.max(1,cart[i].qty-1); saveCart(cart); renderCart();
+        });
+      });
+
+      tbody.querySelectorAll('[data-qty-plus]').forEach(b=>{
+        b.addEventListener('click',()=>{
+          const i=parseInt(b.dataset.qtyPlus,10);
+          const cart=getCart(); cart[i].qty+=1; saveCart(cart); renderCart();
+        });
+      });
+
+      tbody.querySelectorAll('[data-remove]').forEach(b=>{
+        b.addEventListener('click',()=>{
+          const i=parseInt(b.dataset.remove,10);
+          const cart = getCart(); cart.splice(i,1); saveCart(cart); renderCart();
+        });
+      });
+
+      const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+      totalEl.textContent = total.toFixed(2)+' €';
+
+      // PayPal Buttons
+      if(window.paypal) {
+        const container = document.getElementById('paypal-button-container');
+        container.innerHTML='';
+        paypal.Buttons({
+          style: {layout:'vertical'},
+          createOrder: (_data,actions)=>actions.order.create({
+            purchase_units:[{amount:{currency_code:'EUR', value:total.toFixed(2)}, description:'FENDI1 Shop – Bestellung'}]
+          }),
+          onApprove: (_data,actions)=>actions.order.capture().then(()=>{ alert('Danke für deinen Support ❤️'); clearCart(); }),
+          onError: err=>{ console.error(err); alert('PayPal-Fehler. Versuch es bitte nochmal.'); }
+        }).render('#paypal-button-container');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{ updateCartCount(); renderCart(); });
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>

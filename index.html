@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FENDI1 Merch</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">FENDI1</div>
+        <nav>
+            <a href="#hoodies">Hoodies</a>
+            <a href="#shirts">Shirts</a>
+            <a href="sticker.html">Sticker</a>
+            <a href="about.html">About</a>
+            <a href="cart.html" class="cart-link">
+            <div class="cart-icon">
+                🛒
+                <span id="cart-count" class = "cart-count">0</span>
+            </div>
+            </a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <h1>Minimalist FENDI1 Merch</h1>
+            <p>Streetwear. Abgehoben. Spaced Out.</p>
+        </section>
+
+        <section id="hoodies" class="product-section">
+            <h2>Hoodies</h2>
+            <div class="product-card">
+                <img src="assets/hoodie1.png" alt="FENDI1 Hoodie" class="hoodie">
+                <h3>FENDI1 Hoodie</h3>
+                <p>Minimalistisch, Logo in Kapuze, limitiert.</p>
+            </div>
+        </section>
+
+        <section id="shirts" class="product-section">
+            <h2>Shirts</h2>
+            <div class="product-card">
+                <img src="assets/shirt1.png" alt="FENDI1 Shirt">
+                <h3>FENDI1 Shirt</h3>
+                <p>Clean & Spaced Out, perfekt für die Street.</p>
+            </div>
+        </section>
+
+        <section id="stickers" class="product-section">
+            <h2>Stickers</h2>
+            <a href="sticker.html" class="product-card">
+                <img src="assets/Sticker.jpeg" alt="Sticker Design 1" class="sticker">
+                <h3>Sticker Pack #1</h3>
+                <p>Matte Finish, Minimal Style</p>
+            </a>
+        </section>
+
+        <section id="about" class="product-section"
+            <h2>About FENDI1</h2>
+            <a href="about.html" class="product-card"
+                <p>Experimental Trap, Ambient Vibes, minimalistischer Merch für echte Fans.</p>
+            </a>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <p>&copy; 2025 FENDI1. ALL RIGHTS RESERVED.</p>
+    </footer>
+    <script>
+        const footer = document.getElementById('footer');
+
+        window.addEventListener('scroll',() => {
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollTop = window.scrollY;
+
+            if (scrollTop >= scrollableHeight - 10) {
+                footer.classList.add('show');
+            }   else {
+                footer.classList.remove('show');
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
