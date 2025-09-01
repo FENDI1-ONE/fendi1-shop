@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticker - FENDI1</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #121212;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            background-color: #000;
+            color: #fff;
+            padding: 20px 40px;
+        }
+
+        footer {
+            background-color: #000;
+            color:#fff;
+            text-align:center;
+            padding: 1rem;
+        }
+
+        .product-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2rem;
+            padding: 3rem;
+        }
+
+        .product.image {
+            width:300px;
+            height:300px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .product.image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product.image:hover img {
+            transform: scale(1.1);
+        }
+
+        .product-details {
+            max-width: 400px;
+        }
+
+        .product-details h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-details p {
+            margin-bottom: 1rem;
+        }
+
+        .options {
+            margin-bottom: 1rem;
+        }
+
+        select {
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        .back-link {
+            display: block;
+            margin-top:2rem;
+            text-decoration: none;
+            color: #000;
+        }
+    </style>
+</head>
+<body class="sticker-page">
+    <header>
+        <div class="logo">FENDI1 STICKER</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="hoodie1.html">Hoodies</a>
+            <a href="#shirts">Shirts</a>
+            <a href="about.html">About</a>
+            <a href="cart.html" class="cart-link">
+            <div class="cart-wrapper">
+                <span class="cart-icon">
+                🛒</span>
+                <span id="cart-count" class="cart-count">0</span>
+                
+            </div>
+            </a>
+        <nav>
+        
+    </header>
+
+    <main>
+        <div class="product-container">
+            <div class="product-image">
+                <img src="assets/Sticker.jpeg" alt="Sticker Pack Matt Finish">
+            </div>
+
+            <div class="product-details">
+                <h2>FENDI1 Sticker Pack #1 - Matt Finish</h2>
+                <p>Minimalistisches FENDI1-Design, WhiteOnBlack. Perfekt für Laptop, Handy oder Wände.<p>
+
+
+                
+                <div class="options">
+                   <label for="quantity">Menge auswählen:</label>
+                   <select id="quantity">
+                     <option value="10" data-price="5.99">10er Pack - 5,99€</option>
+                     <option value="50" data-price="19.99">50er Pack - 19,99€</option>
+                     <option value="100" data-price="35.99">100er Pack - 35,99€</option>
+                   </select>
+                </div>
+
+                <div class="price">ab 5,99 €</div>
+
+                <button
+                    class="add-to-cart-btn"
+                    data-add-to-cart
+                    data-sku="STICKER PACK #1"
+                    data-name="FENDI1 STICKER PACK #1 MATT FINISH">
+
+                    In den Warenkorb
+                </button>
+
+                <div id="paypal-button-container" style="margin-top: 1rem;"></div>
+                
+            </div>
+        </div>
+    </main>
+
+        <footer id="footer">
+            <p>© 2025 FENDI1. ALL RIGHTS RESERVED.</p>
+        </footer>
+        <script>
+        const footer = document.getElementById('footer');
+
+        window.addEventListener('scroll',() => {
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollTop = window.scrollY;
+
+            if (scrollTop >= scrollableHeight - 10) {
+                footer.classList.add('show');
+            }   else {
+                footer.classList.remove('show');
+            }
+        });
+        </script>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AfC5VIRffxPVQHxMA0A2pXKWXUDmP-fld-hyoiyH1PU8zCN075ZgHvUdvxNr1jiy7lculhBUw7tG2kGC&currency=EUR"></script>
+    <script src="sticker-cart.js"></script>
+    <script>
+    </script>
+</body>
+</html>
+ 
