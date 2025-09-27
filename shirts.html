@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CCL SHIRT</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #fff;
+                color: #000;
+            }
+            header {
+                display: flex;
+                justify-content: space-between;
+                background-color: #000;
+                color: #fff;
+                padding: 20px 40px;
+            }
+            footer {
+                background-color: #000;
+                color:#fff;
+                text-align: center;
+                padding: 1rem;
+            }
+            .product-page {
+                display: flex;
+                justify-content: center;
+                padding: 3rem;
+                gap: 3rem;
+            }
+            .product-gallery {
+                max-width: 400px;
+            }
+            .product-gallery img {
+                width: 100%;
+                border-radius: 10px;
+                margin-bottom: 0.5rem;
+                cursor: pointer;
+                object-fit: cover;  
+            }
+            .thumbnail-container {
+                display: flex;
+                gap: 0.5rem;
+            }
+            .thumbnail-container img {
+                width: 60px;
+                height: 60px;
+                border-radius: 5px;
+                border: 2px solid transparent;
+            }
+            .thumbnail-container img.active-thumb {
+                border-color: #000;
+            }
+            .product-details {
+                max-width: 400px;
+            }
+            .product-details h2 {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+            .product-infos {
+                max-width: 400px;
+            }
+            .product-infos h2 {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+            }
+            .options {
+                margin-bottom: 1rem;
+            }
+            select {
+                padding: 0.5rem;
+                font-size: 1rem;
+            }
+            .color-box-group {
+                display:flex;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+            .color.box {
+                width: 30px;
+                height: 30px;
+                border-radius: 4px;
+                cursor: pointer;
+                border: 2px solid transparent;
+            }
+            .color-box.is-active {
+                border-color: #000;
+            }
+            .price {
+                font-size: 1.5rem;
+                margin: 1rem 0;
+                font-weight: bold;
+            }
+            .button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+                background-color: #000;
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: 0.3s ease;
+            }
+            .button:hover {
+                background-color: #333;
+            }
+        </style>
+    </head>
+    <body class="shirt-page">
+
+        <header>
+            <div class="logo">"COULDN'T CARE LESS" SHIRT</div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="love&drugs.html">L&D Collection</a>
+                <a href="sticker.html">Sticker</a>
+                <a href="about.html">About</a>
+                <a href="cart.html" class="cart-link">
+                    <div class="cart-wrapper">
+                        <span class="cart-icon">🛒</span>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </div>
+                </a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="product-page">
+                <div class="product-gallery">
+                    <img id="main-shirt" src="assets/cclShirtBlackFront&Back.png" alt="Shirt Black Front&Back">
+                    <div id="thumbnail-container" class="thumbnail-container"></div>
+                </div>
+
+                <div class="product-details">
+                    <h2>Premium High Quality FENDI1 Shirt "Couldn't care less"</h2>
+
+
+                    <div class="options">
+                        <label for="shirt-size">Pick size</label>
+                        <select id="shirt-size">
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            <option value="3XL">3XL</option>
+                        </select>
+                    </div>
+
+                    <div class="price">29,99 € incl. shipping & VAT.</div>
+
+                    <div class="product-infos">
+                        <h2>This heavyweight cotton T-shirt is a durable staple with a classic fit. It features a casual style that's perfect for both everyday and casual wear featuring the FENDI1 attitude "Couldn't care less" design.<br>
+
+                        - Seamless, double-needle collar<br>
+                        - Double-needle sleeve and bottom hems<br>
+                        - 100% cotton<br>
+                        - Taped neck and shoulders for durability<br>
+                    </h2>
+                    </div>
+
+                    <button class="add-to-cart-btn" >Add to cart</button>
+
+                    <div id="paypal-button-container" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer id="footer">
+        <p>&copy; 2025 FENDI1. ALL RIGHTS RESERVED.</p>
+    </footer>
+    <script>
+        const footer = document.getElementById('footer');
+
+        function checkFooter() {
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollTop = window.scrollY;
+
+            if (scrollableHeight <= 0 || scrollTop >= scrollableHeight - 10) {
+                footer.classList.add('show');
+            }   else {
+                footer.classList.remove('show');
+            }
+        }
+
+        window.addEventListener("scroll", checkFooter);
+        window.addEventListener("resize", checkFooter);
+        document.addEventListener("DOMContentLoaded", checkFooter);
+</script>
+<script src="https://www.paypal.com/sdk/js?client-id=AfC5VIRffxPVQHxMA0A2pXKWXUDmP-fld-hyoiyH1PU8zCN075ZgHvUdvxNr1jiy7lculhBUw7tG2kGC&currency=EUR"></script>
+<script src="shirt-cart.js"></script>
+    </body>
+</html>
