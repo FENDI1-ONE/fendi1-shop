@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>About FENDI1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">FENDI1</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="ccl.html">CCL Collection</a>
+            <a href="love&drugs.html">L&D Collection</a>
+            <a href="sticker.html">Sticker</a>
+            <a href="cart.html" class = "cart-link">
+            <div class = "cart-wrapper">
+                <span class="cart-icon">
+                🛒</span>
+                <span id="cart-count" class = "cart-count">0</span>
+            </div>
+            </a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="about">
+            <h1>About FENDI1</h1>
+            <p>Spotify-Bio: FENDI1 is a rap artist from germany. His sound lives somewhere between raw rage and atmospheric melancholy. His music hits hard with distorted 808s but always carries emotion - a balance between chaos and clarity. 
+                Whether it's the melodic shadows of LOVE&DRUGS or the glitchy energy of u miss me?... FENDI1 isn't following trends - he's shaping his own lane. 
+                Influenced by opium aesthetics, Lo-Fi rap and Hyperpop, he belnds genres to build a sonic world that feels both futuristic and deeply personal. 
+                His voice floats over heavy production, giving every track a mood that lingers. </p>
+            <p>All programs and codes for the website were created and written by FENDI1 himself.</p>
+            <p>More infos on projects, music & merch you can find on the official FENDI1 Instagram Channel.</p>
+        <section id="social">
+            <h2>Follow Me</h2>
+            <a href="https://www.instagram.com/fendi1.spotify" target="_blank" class="insta-btn">
+                Instagram
+            </a>
+        </section>
+        </section>
+    </main>
+
+    <div id="footer-sentinel"></div>
+
+    <footer id="footer">
+            <p>© 2025 FENDI1. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        const footer = document.getElementById('footer');
+        const sentinel = document.getElementById('footer-sentinel');
+
+        function showFooter() { footer.classList.add('show');}
+        function hideFooter() { footer.classList.remove('show'); }
+
+        if ('IntersectionObserver' in window && sentinel) {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) showFooter();
+                    else hideFooter();
+                });
+            }, { root: null, threshold: 0 });
+            io.observe(sentinel);
+        }   else {
+            function checkFooter() {
+                const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+                if (scrollable <= 0) return showFooter();
+                window.scrollY >= scrollable - 2 ? showFooter() : hideFooter();
+            }
+            window.addEventListener('scroll', checkFooter);
+            window.addEventListener('resize', checkFooter);
+            window.addEventListener('load', checkFooter);
+            checkFooter();
+        }
+    </script>
+
+</body>
+</html>
