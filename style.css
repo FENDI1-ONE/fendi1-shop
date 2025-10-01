@@ -690,7 +690,8 @@ body.light a { color:#111; }
     flex-direction: column;
     position: absolute;
     top: 60px;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background: #111;
     width: 200px;
     padding: 10px;
