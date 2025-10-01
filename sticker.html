@@ -149,9 +149,9 @@
                      <option value="50" data-price="7.99">Pack of 50 - 7,99€</option>
                      <option value="100" data-price="14.99">Pack of 100 - 14,99€</option>
                    </select>
-                </div>
+                
 
-                <div class="price">from 1,99 €</div>
+                <p id="price">1,99 € incl. shipping & VAT.</p></div>
 
                 <button
                     class="add-to-cart-btn"
@@ -172,6 +172,20 @@
             <p>© 2025 FENDI1. ALL RIGHTS RESERVED.</p>
         </footer>
         <script>
+        const prices = {
+            10: "1,99 € incl. shipping & VAT.",
+            25: "4,49 € incl. shipping & VAT.",
+            50: "7,99 € incl. shipping & VAT.",
+            100: "14,99 € incl. shipping & VAT."
+        };
+
+        const packSelect = document.getElementById("quantity");
+        const priceText = document.getElementById("price");
+
+        packSelect.addEventListener("change", () => {
+            const selected = packSelect.value;
+            priceText.textContent = prices[selected];
+        });
         const footer = document.getElementById('footer');
 
         function checkFooter() {
