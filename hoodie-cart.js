@@ -23,6 +23,9 @@ const CART_KEY = "f1_cart_v1";
     const addToCartBtn = document.querySelector(".add-to-cart-btn");
     const selectedColor = document.querySelector("#color-box-group");
     const selectedSize = document.querySelector("#hoodie-size");
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const hoodieName = `"COULDN'T CARE LESS" Hoodie`;
+    const hoodiePrice = 49.99;
 
     function getCart() {
         try {
@@ -58,11 +61,12 @@ const CART_KEY = "f1_cart_v1";
 
     function updateProductData() {
         const sku = `hoodie-${selectedColor}-${selectedSize}`;
-        const price = 64.99;
+        const price = 49.99;
         paypalContainer.dataset.sku = sku;
         paypalContainer.dataset.price = price;
         paypalContainer.dataset.name = `FENDI1 Hoodie-${selectedColor} ${selectedSize}`;
     }
+
 
     document.addEventListener("DOMContentLoaded", () => {
         updateCartCount();
@@ -154,17 +158,75 @@ if (addBtn && sizeSelect) {
 const paypalContainer = document.getElementById("paypal-button-container");
   if (paypalContainer && sizeSelect) {
     paypal.Buttons({
-        createOrder: function(data, actions) {
+        createOrder: function(_data, actions) {
+            const selectedSize = document.querySelector("#hoodie-size").value;
+            const price = 49.99;
+            const quantity = 1;
+            const productName = `FENDI1 Hoodie "Couldn't Care Less" (${selectedSize})`;
+            const total = (price * quantity).toFixed(2);
             return actions.order.create({
                 purchase_units: [{
-                    amount: { value: '49.99' }
-                }]
+                    amount: { currency_code: "EUR",
+                         value: total,
+                        breakdown: {
+                            item_total: {
+                                currency_code: "EUR",
+                                value: total
+                            }
+                        } 
+                    },
+                    description: productName,
+                    items: [{
+                        name: productName,
+                        unit_amount: {
+                            currency_code: "EUR",
+                            value: price.toFixed(2)
+                        },
+                        quantity: quantity.toString()
+                    }
+                ]
+                }
+            ]
         });
     },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
+        onApprove: async (data, actions) => {
+            const selectedSize = document.querySelector("#hoodie-size").value;
+            const details = await actions.order.capture();
+
+            console.log("PayPal-Details:", details);
+            const payerEmail = details.payer.email_adress;
+            const payerName = details.payer.name.given_name;
+            const orderId = details.id;
+            const totalAmount = details.purchase_units[0].amount.value;
+            const hoodieData = {
+                name: hoodieName,
+                price: hoodiePrice,
+                size: selectedSize 
+            };
+        try {
+            const res = await fetch("http://localhost:3000/send-confirmation", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                orderId,
+                payerName,
+                payerEmail,
+                items: [hoodieData],
+                totalAmount,
+                rawPayPalOrder: details
+            })
+          });
+
+          const dataRes = await res.json();
+          console.log("serverantwort:", dataRes);
+
                 alert('Thank you for your support, ' + details.payer.name.given_name + '!');
-            });
+
+        } catch(err) {
+            console.error("Fehler bei der Bestellung:", err);
+            alert("We are very sorry to inform you that there was an issue with your order. Please try again.");
+        }
+        
         }
     }).render('#paypal-button-container');
 

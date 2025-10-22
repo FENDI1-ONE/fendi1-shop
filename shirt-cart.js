@@ -25,6 +25,8 @@ const addToCartBtn = document.querySelector(".add-to-cart-btn");
 const paypalContainer = document.getElementById("paypal-button-conatiner");
 const selectedColor = document.querySelector("#color-box-group");
 const selectedSize = document.querySelector("#shirt-size");
+const shirtName = "COULDN'T CARE LESS SHIRT";
+const shirtPrice = 29.99;
 
 function getCart() {
     try {
@@ -151,17 +153,69 @@ if (addBtn && sizeSelect) {
 const paypalContainer = document.getElementById("paypal-button-container");
   if (paypalContainer && sizeSelect) {
     paypal.Buttons({
-        createOrder: function(data, actions) {
+        createOrder: function(_data, actions) {
+            const selectedSize = document.querySelector("#shirt-size").value;
+            const price = 29.99;
+            const quantity = 1;
+            const productName = `FENDI1 Shirt "COULDN'T CARE LESS" (${selectedSize})`;
+            const total = (price * quantity).toFixed(2);
             return actions.order.create({
                 purchase_units: [{
-                    amount: { value: '29.99' }
+                    amount: { currency_code: "EUR", value: total, breakdown: {
+                        item_total: {
+                            currency_code: "EUR",
+                            value: total
+                        }
+                    } 
+                },
+                description: productName,
+                items: [{
+                    name: productName,
+                    unit_amount: {
+                        currency_code: "EUR",
+                        value: price.toFixed(2)
+                    },
+                    quantity: quantity.toString()
+                }]
                 }]
             });
         },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    alert('Danke für deinen Kauf, ' + details.payer.name.given_name + '!');
-                });
+            onApprove: async (data, actions) => {
+                const selectedSize = document.querySelector("#shirt-size").value;
+                const details = await actions.order.capture();
+
+                console.log("PayPal-Details:", details);
+                    const payerEmail = details.payer.email_adress;
+                    const payerName = details.payer.name.given_name;
+                    const orderId = details.id;
+                    const totalAmount = details.purchase_units[0].amount.value;
+                    const shirtData = {
+                        name: shirtName,
+                        price: shirtPrice,
+                        size: selectedSize
+                    };
+            try {
+            const res = await fetch("http://localhost:3000/send-confirmation", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orderId,
+                    payerName,
+                    payerEmail,
+                    items: [shirtData],
+                    totalAmount,
+                    rawPayPalOrder: details
+            })
+          });
+
+          const dataRes = await res.json();
+          console.log("serverantwort:", dataRes);
+          alert('Thank you for your support, ' + details.payer.name.given_name + '!');
+        } catch(err) {
+            console.error("Fehler bei der Bestellung:", err);
+            alert("We are very sorry to inform you that there was an issue with your order. Please try again.");
+        }
+            
             }
     }).render('#paypal-button-container');
 

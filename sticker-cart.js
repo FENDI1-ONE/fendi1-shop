@@ -1,4 +1,7 @@
 const CART_KEY = "f1_cart_v1";
+const stickerName = "FENDI1 Sticker Pack #1";
+const selectedPack = document.querySelector("#quantity");
+const stickerPrice = document.querySelector("#price-display");
 
 function getCart() {
     try {
@@ -66,22 +69,78 @@ document.addEventListener("DOMContentLoaded", () => {
     const paypalContainer = document.getElementById("paypal-button-container");
     if (paypalContainer && packSelect) {
         paypal.Buttons({
-            createOrder: (data, actions) => {
+            createOrder: (_data, actions) => {
                 const selectedOption = packSelect.options[packSelect.selectedIndex];
                 const price = parseFloat(selectedOption.dataset.price);
+                const quantity = 1;
+                const productName = "FENDI1 Sticker Pack #1";
+                const total = (price * quantity).toFixed(2);
                 return actions.order.create({
-                    purchase_units: [{ amount: { value: price.toFixed(2) } }]
+                    purchase_units: [{
+                    amount: { currency_code: "EUR",
+                         value: total,
+                         breakdown: {
+                            item_total: {
+                                currency_code: "EUR",
+                                value: total
+                            }
+                         }
+                    },
+                    description: productName,
+                    items: [{
+                        name: productName,
+                        unit_amount: {
+                            currency_code: "EUR",
+                            value: price.toFixed(2)
+                        },
+                        quantity: quantity.toString()
+                    }
+                ]
+            }]
+
                 });
             },
-            onApprove: (data, actions) => {
-                return actions.order.capture().then(details => {
-                    alert('Danke für deinen Kauf, ' + details.payer.name.given_name + '!');
-                });
-            },
-            onError: (err) => {
-                console.error("PayPal Error:", err);
-                alert("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
+            onApprove: async (data, actions) => {
+                const selectedOption = packSelect.options[packSelect.selectedIndex];
+                const packText = selectedOption.textContent;
+                const packLabel = packText.split("-")[0];
+                const details = await actions.order.capture();
+                const price = parseFloat(selectedOption.dataset.price);
+
+                console.log("PayPal-Details:", details);
+                const payerEmail = details.payer.email_adress;
+                const payerName = details.payer.name.given_name;
+                const orderId = details.id;
+                const totalAmount = details.purchase_units[0].amount.value;
+                const StickerData = {
+                    name: stickerName,
+                    price: price,
+                    size: packLabel
+                };
+            try {
+            const res = await fetch("http://localhost:3000/send-confirmation", {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                orderId,
+                payerName,
+                payerEmail,
+                items: [StickerData],
+                totalAmount,
+                rawPayPalOrder: details
+            })
+            });
+            const dataRes = await res.json();
+            console.log("serverantwort:", dataRes);
+                alert('Thank you for your support, ' + details.payer.name.given_name + '!');
+        }   catch(err) {
+            console.error("Fehler bei der Bestellung:", err);
+            alert("We are very sorry to inform you that there was an issue with your order. Please try again.");
+        }
+            
             }
         }).render('#paypal-button-container');
+    }  else {
+        console.log("PayPal SDK wurde nicht geladen");
     }
-});
+})

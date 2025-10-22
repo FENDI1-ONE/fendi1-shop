@@ -14,6 +14,9 @@ const mainImage = document.getElementById("main-shirt");
 const thumbnailContainer = document.getElementById("thumbnail-container");
 const colorBoxes = document.querySelectorAll(".color-box");
 const sizeSelect = document.getElementById("shirt1-size");
+const selectedSize = document.querySelector("#shirt1-size");
+const shirtPrice = 29.99;
+const shirtName = `FENDI1 LOVE&DRUGS "IWEMNK" Shirt`;
 
 function getCart() {
     try {
@@ -118,17 +121,69 @@ if (addBtn && sizeSelect) {
 const paypalContainer = document.getElementById("paypal-button-container");
   if (paypalContainer && sizeSelect) {
     paypal.Buttons({
-        createOrder: function(data, actions) {
+        createOrder: function(_data, actions) {
+            const selectedSize = document.querySelector("#shirt1-size").value;
+            const price = 29.99;
+            const quantity = 1;
+            const productName = `FENDI1 LOVE&DRUGS Shirt "IWEMNK" (${selectedSize})`;
+            const total = (price * quantity).toFixed(2);
             return actions.order.create({
                 purchase_units: [{
-                    amount: { value: '29.99' }
+                    amount: { currency_code: "EUR", value: total, breakdown: {
+                        item_total: {
+                            currency_code: "EUR",
+                            value: total
+                        }
+                    } 
+                },
+                description: productName,
+                items: [{
+                    name: productName,
+                    unit_amount: {
+                        currency_code: "EUR",
+                        value: price.toFixed(2)
+                    },
+                    quantity: quantity.toString()
+                }]
                 }]
         });
     },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                alert('Danke für deinen Kauf, ' + details.payer.name.given_name + '!');
-            });
+        onApprove: async (data, actions) => {
+            const selectedSize = document.querySelector("#shirt1-size").value;
+            const details = await actions.order.capture();
+
+            console.log("PayPal-Details:", details);
+                const payerEmail = details.payer.email_adress;
+                const payerName = details.payer.name.given_name;
+                const orderId = details.id;
+                const totalAmount = details.purchase_units[0].amount.value;
+                const shirtData = {
+                    name: shirtName,
+                    price: shirtPrice,
+                    size: selectedSize
+                };
+        try {
+            const res = await fetch("http://localhost:3000/send-confirmation", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                orderId,
+                payerName,
+                payerEmail,
+                items: [shirtData],
+                totalAmount,
+                rawPayPalOrder: details
+            })
+        });
+
+        const dataRes = await res.json();
+        console.log("serverantwort", dataRes);
+            alert('Thank you for your support, ' + details.payer.name.given_name + '!');
+    } catch(err) {
+        console.error("Fehler bei der Bestellung:", err);
+        alert("We are very sorry to inform you that there was an issue with your order. Please try again.");
+    }
+        
         }
     }).render('#paypal-button-container');
 
@@ -138,4 +193,22 @@ const paypalContainer = document.getElementById("paypal-button-container");
 
 })
 
+const mainProduct = document.getElementById("main-shirt");
+const zoomContainer = document.getElementById("zoom-container");
+
+zoomContainer.addEventListener('mouseenter', () => {
+    zoomContainer.classList.add('zoom-active');
+});
+
+zoomContainer.addEventListener('mouseleave', () => {
+    zoomContainer.classList.remove('zoom-active');
+    mainProduct.style.transformOrigin = "center center";
+});
+
+zoomContainer.addEventListener('mousemove', (e) => {
+    const rect = zoomContainer.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    mainProduct.style.transformOrigin = `${x}% ${y}%`;
+});
 
