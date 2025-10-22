@@ -108,24 +108,21 @@
 </head>
 <body class="sticker-page">
     <header>
-        <div class="logo">FENDI1</div>
-        <nav id="nav" class="nav-links">
+        <div class="logo">FENDI1 STICKER</div>
+        <nav>
             <a href="index.html">Home</a>
             <a href="ccl.html">CCL Collection</a>
             <a href="love&drugs.html">L&D Collection</a>
             <a href="about.html">About</a>
-        </nav>
-
-        <div class="header-right">
+            <a href="cart.html" class="cart-link">
             <div class="cart-wrapper">
-                <a href="cart.html" class="cart-link">
                 <span class="cart-icon">
                 🛒</span>
                 <span id="cart-count" class="cart-count">0</span>
-                </a>  
+                
             </div>
-        <div class="burger" id="burger">&#9776;</div>
-        </div>
+            </a>
+        <nav>
         
     </header>
 
@@ -144,14 +141,14 @@
                 <div class="options">
                    <label for="quantity">Pick quantity:</label>
                    <select id="quantity">
-                     <option value="10" data-price="1.99">Pack of 10 - 1,99€</option>
-                     <option value ="25" data-price="4.49">Pack of 25 - 4,49€</option>
-                     <option value="50" data-price="7.99">Pack of 50 - 7,99€</option>
-                     <option value="100" data-price="14.99">Pack of 100 - 14,99€</option>
+                     <option value="10" data-price="1.99">Pack of 10</option>
+                     <option value ="25" data-price="4.49">Pack of 25</option>
+                     <option value="50" data-price="7.99">Pack of 50</option>
+                     <option value="100" data-price="14.99">Pack of 100</option>
                    </select>
-                
+                </div>
 
-                <p id="price" class="price">1,99 € incl. shipping & VAT.</p></div>
+                <div class="price" id="price-display">from 1,99 € incl. shipping & VAT.</div>
 
                 <button
                     class="add-to-cart-btn"
@@ -171,21 +168,22 @@
         <footer id="footer">
             <p>© 2025 FENDI1. ALL RIGHTS RESERVED.</p>
         </footer>
+
         <script>
-        const prices = {
-            10: "1,99 € incl. shipping & VAT.",
-            25: "4,49 € incl. shipping & VAT.",
-            50: "7,99 € incl. shipping & VAT.",
-            100: "14,99 € incl. shipping & VAT."
-        };
+            const quantitySelect = document.getElementById("quantity");
+            const priceDisplay = document.getElementById("price-display");
 
-        const packSelect = document.getElementById("quantity");
-        const priceText = document.getElementById("price");
+            function updatePriceText() {
+                const selected = quantitySelect.options[quantitySelect.selectedIndex];
+                const price = selected.getAttribute("data-price");
+                priceDisplay.textContent = `${price} € incl. shipping & VAT`; 
+            }
 
-        packSelect.addEventListener("change", () => {
-            const selected = packSelect.value;
-            priceText.textContent = prices[selected];
-        });
+            quantitySelect.addEventListener("change", updatePriceText);
+
+            updatePriceText();
+        </script>
+        <script>
         const footer = document.getElementById('footer');
 
         function checkFooter() {
